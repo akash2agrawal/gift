@@ -103,80 +103,80 @@
   </div>
 
   <script>
-    const container = document.getElementById('puzzle-container');
-    const message = document.getElementById('message');
+const container = document.getElementById('puzzle-container');
+const message = document.getElementById('message');
 
-    const positions = [
-      '0px 0px',
-      '-100px 0px',
-      '-200px 0px',
-      '0px -100px',
-      '-100px -100px',
-      '-200px -100px',
-      '0px -200px',
-      '-100px -200px',
-      '-200px -200px'
-    ];
+const positions = [
+  '0px 0px',
+  '-100px 0px',
+  '-200px 0px',
+  '0px -100px',
+  '-100px -100px',
+  '-200px -100px',
+  '0px -200px',
+  '-100px -200px',
+  '-200px -200px'
+];
 
-    let shuffled = [...positions].sort(() => Math.random() - 0.5);
+let shuffled = [...positions].sort(() => Math.random() - 0.5);
 
-    function renderPuzzle() {
-      container.innerHTML = '';
+let selectedPiece = null;
 
-      shuffled.forEach((pos, index) => {
-        const piece = document.createElement('div');
+function renderPuzzle() {
+  container.innerHTML = '';
 
-        piece.className = 'piece';
-        piece.style.backgroundPosition = pos;
-        piece.draggable = true;
-        piece.dataset.index = index;
+  shuffled.forEach((pos, index) => {
+    const piece = document.createElement('div');
 
-        piece.addEventListener('dragstart', dragStart);
-        piece.addEventListener('dragover', dragOver);
-        piece.addEventListener('drop', drop);
+    piece.className = 'piece';
+    piece.style.backgroundPosition = pos;
 
-        container.appendChild(piece);
-      });
+    piece.addEventListener('click', () => selectPiece(index));
+
+    if (selectedPiece === index) {
+      piece.style.border = '3px solid yellow';
     }
 
-    let draggedIndex = null;
+    container.appendChild(piece);
+  });
+}
 
-    function dragStart() {
-      draggedIndex = this.dataset.index;
+function selectPiece(index) {
+
+  if (selectedPiece === null) {
+    selectedPiece = index;
+  } else {
+
+    [shuffled[selectedPiece], shuffled[index]] =
+    [shuffled[index], shuffled[selectedPiece]];
+
+    selectedPiece = null;
+
+    checkWin();
+  }
+
+  renderPuzzle();
+}
+
+function checkWin() {
+
+  let win = true;
+
+  for (let i = 0; i < positions.length; i++) {
+    if (positions[i] !== shuffled[i]) {
+      win = false;
+      break;
     }
+  }
 
-    function dragOver(e) {
-      e.preventDefault();
-    }
+  if (win) {
+    container.style.display = 'none';
+    message.style.display = 'block';
+  }
+}
 
-    function drop() {
-      const targetIndex = this.dataset.index;
-
-      [shuffled[draggedIndex], shuffled[targetIndex]] =
-      [shuffled[targetIndex], shuffled[draggedIndex]];
-
-      renderPuzzle();
-      checkWin();
-    }
-
-    function checkWin() {
-      let win = true;
-
-      for (let i = 0; i < positions.length; i++) {
-        if (positions[i] !== shuffled[i]) {
-          win = false;
-          break;
-        }
-      }
-
-      if (win) {
-        container.style.display = 'none';
-        message.style.display = 'block';
-      }
-    }
-
-    renderPuzzle();
-  </script>
+renderPuzzle();
+</script>
 
 </body>
 </html>
