@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Surprise ❤️</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      min-height: 100vh;
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      padding-top: 20px;
+      font-size: 36px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    #puzzle-container {
+      width: 300px;
+      height: 300px;
+      margin: 30px auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .piece {
+      width: 100px;
+      height: 100px;
+      border: 1px solid white;
+      background-image: url('yourphoto.jpg');
+      background-size: 300px 300px;
+      cursor: grab;
+    }
+
+    #message {
+      display: none;
+      background: white;
+      color: black;
+      width: 85%;
+      max-width: 450px;
+      margin: 30px auto;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .final-image {
+      width: 220px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      background: #ff4b6e;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Complete The Puzzle ❤️</h1>
+
+  <p>Drag and drop the pieces to reveal your surprise 😌</p>
+
+  <div id="puzzle-container"></div>
+
+  <div id="message">
+    <img src="yourphoto.jpg" class="final-image">
+
+    <h2>You Solved It ❤️</h2>
+
+    <p>
+      Thank you for being such an amazing part of my life ✨
+      <br><br>
+      Every moment with you feels special.
+      <br><br>
+      This little puzzle was just a reminder that you mean a lot to me 💖
+    </p>
+
+    <button onclick="alert('Now go smile 😌❤️')">
+      One More Smile
+    </button>
+  </div>
+
+  <script>
+    const container = document.getElementById('puzzle-container');
+    const message = document.getElementById('message');
+
+    const positions = [
+      '0px 0px',
+      '-100px 0px',
+      '-200px 0px',
+      '0px -100px',
+      '-100px -100px',
+      '-200px -100px',
+      '0px -200px',
+      '-100px -200px',
+      '-200px -200px'
+    ];
+
+    let shuffled = [...positions].sort(() => Math.random() - 0.5);
+
+    function renderPuzzle() {
+      container.innerHTML = '';
+
+      shuffled.forEach((pos, index) => {
+        const piece = document.createElement('div');
+
+        piece.className = 'piece';
+        piece.style.backgroundPosition = pos;
+        piece.draggable = true;
+        piece.dataset.index = index;
+
+        piece.addEventListener('dragstart', dragStart);
+        piece.addEventListener('dragover', dragOver);
+        piece.addEventListener('drop', drop);
+
+        container.appendChild(piece);
+      });
+    }
+
+    let draggedIndex = null;
+
+    function dragStart() {
+      draggedIndex = this.dataset.index;
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+    }
+
+    function drop() {
+      const targetIndex = this.dataset.index;
+
+      [shuffled[draggedIndex], shuffled[targetIndex]] =
+      [shuffled[targetIndex], shuffled[draggedIndex]];
+
+      renderPuzzle();
+      checkWin();
+    }
+
+    function checkWin() {
+      let win = true;
+
+      for (let i = 0; i < positions.length; i++) {
+        if (positions[i] !== shuffled[i]) {
+          win = false;
+          break;
+        }
+      }
+
+      if (win) {
+        container.style.display = 'none';
+        message.style.display = 'block';
+      }
+    }
+
+    renderPuzzle();
+  </script>
+
+</body>
+</html>
